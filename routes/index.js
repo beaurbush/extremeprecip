@@ -22,8 +22,8 @@ router.get('/list', function (req, res) {
   })
 });
 
-router.get('/extremeprecip', function (req, res) {
-  getMoreData().then(function(data){
+router.get('/rawdata', function (req, res) {
+  getAllData().then(function(data){
     res.send(data);
   }).catch(function(filteredData){
     res.send(filteredData);
@@ -41,5 +41,10 @@ credentials: { username: process.env.ASTRAUSERNAME, password: process.env.ASTRAP
 
 async function getMoreData(){
   const result = await client.execute('SELECT date, latitude, longitude, CAST("precipitation.amount" AS int) AS Precip FROM betterbotz."Belton20" WHERE "precipitation.amount" > 100 ALLOW FILTERING');
+  return result.rows;
+}
+
+async function getAllData(){
+  const result = await client.execute('SELECT * FROM betterbotz."Belton20" WHERE "precipitation.amount" > 0 LIMIT 1 ALLOW FILTERING');
   return result.rows;
 }
