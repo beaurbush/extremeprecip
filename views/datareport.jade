@@ -3,15 +3,17 @@ block content
     ul
         for order in data
             li
-                div
-                    b 
+                div 
                     b Date of Event:
                     =order.date
                     div
                         b Amount:
                         =order.precip + " mm"
                     div
-                        b Description:
-                        =order.description
+                        b Latitude:
+                        =order.latitude
+                    div     
+                        b Longitude: 
+                        =order.longitude
         else
             li No orders currently.

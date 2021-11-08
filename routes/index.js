@@ -3,12 +3,20 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Extreme Precipitation' });
+  res.render('index', { title: 'Extreme Precipitation Finder' });
 });
 
 router.get('/datareport', function (req, res) {
   getMoreData().then(function(data){
     res.render('datareport', { data } );
+  }).catch(function(filteredData){
+    res.send(filteredData);
+  })
+});
+
+router.get('/list', function (req, res) {
+  getMoreData().then(function(data){
+    res.render('list', { data } );
   }).catch(function(filteredData){
     res.send(filteredData);
   })
@@ -32,6 +40,6 @@ credentials: { username: process.env.ASTRAUSERNAME, password: process.env.ASTRAP
 });
 
 async function getMoreData(){
-  const result = await client.execute('SELECT date, CAST("precipitation.amount" AS int) AS Precip FROM betterbotz."Belton20" WHERE "precipitation.amount" > 100 ALLOW FILTERING');
+  const result = await client.execute('SELECT date, latitude, longitude, CAST("precipitation.amount" AS int) AS Precip FROM betterbotz."Belton20" WHERE "precipitation.amount" > 100 ALLOW FILTERING');
   return result.rows;
 }
