@@ -30,6 +30,22 @@ router.get('/rawdata', function (req, res) {
   })
 });
 
+router.get('/insertdata', function (req, res) {
+  InsertData().then(function(data){
+    res.render('insertdata', { data } );
+  }).catch(function(filteredData){
+    res.send(filteredData);
+  })
+});
+
+router.get('/dataremoved', function (req, res) {
+  RemoveData().then(function(data){
+    res.render('dataremoved', { data } );
+  }).catch(function(filteredData){
+    res.send(filteredData);
+  })
+});
+
 module.exports = router;
 
 const path = './.data/secure-connect-database_name.zip';
@@ -45,6 +61,16 @@ async function getMoreData(){
 }
 
 async function getAllData(){
-  const result = await client.execute('SELECT * FROM betterbotz."Belton20" WHERE "precipitation.amount" > 0 LIMIT 1 ALLOW FILTERING');
+  const result = await client.execute('SELECT date, latitude, longitude, "precipitation.amount" FROM betterbotz."Belton20" LIMIT 1 ALLOW FILTERING');
+  return result.rows;
+}
+
+async function InsertData(){
+  const result = await client.execute('INSERT INTO betterbotz."Belton20" (date, latitude, longitude, "precipitation.amount") VALUES ($$2021-11-09$$, 30, -97.5, 125) IF NOT EXISTS');
+  return result.rows;
+}
+
+async function RemoveData(){
+  const result = await client.execute('DELETE FROM betterbotz."Belton20" WHERE date=$$2021-11-09$$ IF EXISTS');
   return result.rows;
 }
